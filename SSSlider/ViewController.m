@@ -10,7 +10,9 @@
 #import "SSSlider.h"
 
 @interface ViewController ()
-
+{
+    UILabel *lbl;
+}
 @end
 
 @implementation ViewController
@@ -19,13 +21,31 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    SSSlider *slider = [[SSSlider alloc] initWithFrame:CGRectMake(50, 200, 200, 30)];
-    slider.minimumValue = 20000;
-    slider.maximumValue = 399999;
-//    slider.orientation = SSSliderOrientationHorizontalRight;
-    
-    slider.backgroundColor = [UIColor greenColor];
+    SSSlider *slider = [[SSSlider alloc] initWithFrame:CGRectMake(10, 200, 300, 30)];
+    slider.value = .5;
+    slider.minimumTrackTintColor = [UIColor greenColor];
+    slider.maximumTrackTintColor = [UIColor redColor];
+    slider.orientation = SSSliderOrientationHorizontalLeft;
+    slider.thumbImage = [UIImage imageFilename:@"slider_allin_thumb"];
+//    slider.backgroundColor = [UIColor greenColor];
+    [slider addTarget:self action:@selector(test:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:slider];
+    
+    lbl = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 40)];
+    lbl.textAlignment = NSTextAlignmentCenter;
+    lbl.center = CGPointMake(self.view.bounds.size.width/2, 100);
+    lbl.text = [NSString stringWithFormat:@"%f", slider.value];
+    lbl.backgroundColor = [UIColor yellowColor];
+    lbl.font = [UIFont systemFontOfSize:16];
+    lbl.textColor = [UIColor redColor];
+    [self.view addSubview:lbl];
+}
+- (void)test:(id)sender
+{
+    SSSlider *slider = (id)sender;
+    NSLog(@"sender = %f", slider.value);
+    lbl.text = [NSString stringWithFormat:@"%f", slider.value];
+    
 }
 
 - (void)didReceiveMemoryWarning

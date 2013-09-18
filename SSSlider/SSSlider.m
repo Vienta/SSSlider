@@ -17,8 +17,11 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-//    self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, SLIDER_HEIGHT)];
-    if (self = [super initWithFrame:frame]) {
+    UIImage *trackImg = [UIImage imageFilename:@"rangethumb"];
+    
+    self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, trackImg.size.height*IMG_SIZE+2*INNER_SIZE)];
+    
+    if (self) {
         [self initSlider];
     }
     return self;
@@ -31,10 +34,12 @@
     _maximumValue = 1.0;
     _orientation = SSSliderOrientationHorizontalLeft;
     _value = _minimumValue;
+    self.backgroundColor = [UIColor clearColor];
 }
 
 - (void)drawRect:(CGRect)rect
 {
+    [super drawRect:rect];
     switch (_orientation) {
         case SSSliderOrientationHorizontalLeft:{
             [self sliderOrientationHorizontalLeft:rect];
@@ -62,27 +67,64 @@
 
 - (void)sliderOrientationHorizontalLeft:(CGRect)rect
 {
+    if (!_thumbImage) {
+        _thumbImage = [UIImage imageFilename:@"rangethumb"];
+    }
+    CGSize thumbSize = _thumbImage.size;
+    CGFloat thumbX = thumbSize.width *IMG_SIZE;
+    CGFloat thumbY = thumbSize.height*IMG_SIZE;
+
     //background
-    _backgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, rect.size.width, SLIDER_HEIGHT)];
+    _backgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, (rect.size.height - (thumbY + 2*INNER_SIZE))/2, rect.size.width, thumbY+2*INNER_SIZE)];
     _backgroundImageView.contentMode = UIViewContentModeScaleToFill;
     [self addSubview:_backgroundImageView];
-    //trackimage
-    _trackImageView = [[UIImageView alloc] initWithFrame:CGRectMake(INNER_SIZE, 0, rect.size.width - 2 *INNER_SIZE, SLIDER_HEIGHT)];
+    //track
+    _trackImageView = [[UIImageView alloc] initWithFrame:CGRectMake(thumbX/2.0, 0, rect.size.width - thumbX, thumbY)];
     _trackImageView.contentMode = UIViewContentModeScaleToFill;
     [self addSubview:_trackImageView];
     if (!_trackImage) {
-        _trackImage = [UIImage imageNamed:@"fullrange.png"];
+        _trackImage = [UIImage imageFilename:@"fullrange"];
     }
-    _trackImageView.image = _trackImage;
-    _trackImageView.frame = CGRectMake(INNER_SIZE, MAX((self.frame.size.height-_trackImage.size.height)/2.0,0), self.frame.size.width-2*INNER_SIZE, MIN(self.frame.size.height,_trackImage.size.height));
     
-    _thumbImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, (SLIDER_HEIGHT - self.frame.size.height)/2.0, self.frame.size.height, self.frame.size.height)];
+    _trackImageView.image = _trackImage;
+    _trackImageView.frame = CGRectMake(thumbX/2.0, (rect.size.height-_trackImage.size.height*IMG_SIZE)/2.0, rect.size.width-thumbX, MIN(rect.size.height,_trackImage.size.height*IMG_SIZE));
+    
+    
+    //thumb
+    float per = (_value - _minimumValue) / (_maximumValue - _minimumValue);
+    float thumbOriginX = (self.frame.size.width - _thumbImage.size.width*IMG_SIZE)*per;
+    _thumbImageView = [[UIImageView alloc] initWithFrame:CGRectMake(thumbOriginX, (rect.size.height - thumbY)/2.0, thumbX, thumbY)];
     _thumbImageView.contentMode = UIViewContentModeScaleToFill;
     [self addSubview:_thumbImageView];
-    if (!_thumbImage) {
-        _thumbImage = [UIImage imageNamed:@"rangethumb"];
-    }
     _thumbImageView.image = _thumbImage;
+    
+    //right track
+    _maximumTrackImageView = [[UIImageView alloc] initWithFrame:CGRectMake(_thumbImageView.center.x, 0, _trackImageView.bounds.size.width - (_thumbImageView.center.x-thumbX/2.0), thumbY)];
+    _maximumTrackImageView.contentMode = UIViewContentModeScaleToFill;
+    [self insertSubview:_maximumTrackImageView belowSubview:_thumbImageView];
+    if (_maximumTrackImage) {
+        _maximumTrackImageView.image = _maximumTrackImage;
+        _maximumTrackImageView.frame = CGRectMake(_thumbImageView.center.x, (rect.size.height - _maximumTrackImage.size.height*IMG_SIZE)/2.0, rect.size.width - thumbX - _thumbImageView.center.x, _maximumTrackImage.size.height *IMG_SIZE);
+    } else {
+        if (_maximumTrackTintColor) {
+            _maximumTrackImageView.backgroundColor = _maximumTrackTintColor;
+            _maximumTrackImageView.bounds = CGRectMake(0, 0, _maximumTrackImageView.bounds.size.width, _trackImageView.bounds.size.height);
+        }
+    }
+    
+    //left track
+    _minimumTrackImageView = [[UIImageView alloc] initWithFrame:CGRectMake(thumbX/2.0, 0, _thumbImageView.center.x-thumbX/2.0, thumbY)];
+    _minimumTrackImageView.contentMode = UIViewContentModeScaleToFill;
+    [self insertSubview:_minimumTrackImageView belowSubview:_thumbImageView];
+    if (_minimumTrackImage) {
+        _minimumTrackImageView.image = [_minimumTrackImage stretchableImageWithLeftCapWidth:0 topCapHeight:0];
+        _minimumTrackImageView.frame = CGRectMake(thumbX/2.0, (rect.size.height - _minimumTrackImage.size.height * IMG_SIZE)/2.0, _thumbImageView.center.x - thumbX/2.0, _minimumTrackImage.size.height *IMG_SIZE);
+    } else {
+        if (_minimumTrackTintColor) {
+            _minimumTrackImageView.backgroundColor = _minimumTrackTintColor;
+            _minimumTrackImageView.bounds = CGRectMake(0, 0, _minimumTrackImageView.bounds.size.width, _trackImageView.bounds.size.height);
+        }
+    }
 }
 
 - (void)sliderOrientationHorizontalRight:(CGRect)rect
@@ -97,7 +139,7 @@
     _trackImageView.contentMode = UIViewContentModeScaleToFill;
     [self addSubview:_trackImageView];
     if (!_trackImage) {
-        _trackImage = [UIImage imageNamed:@"fullrange.png"];
+        _trackImage = [UIImage imageNamed:@"fullrange"];
     }
     _trackImageView.image = _trackImage;
     _trackImageView.frame = CGRectMake(INNER_SIZE, MAX((self.frame.size.height-_trackImage.size.height)/2.0,0), self.frame.size.width-2*INNER_SIZE, MIN(self.frame.size.height,_trackImage.size.height));
@@ -129,6 +171,8 @@
 {
     SAFE_ARC_RELEASE(thumbImage);
     _thumbImage = SAFE_ARC_RETAIN(thumbImage);
+    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, _thumbImage.size.height * IMG_SIZE);
+    [self setNeedsDisplay];
 }
 
 - (UIImage *)thumbImage
@@ -137,6 +181,28 @@
         _thumbImage = [UIImage imageNamed:@"rangethumb"];
     }
     return _thumbImage;
+}
+
+- (void)setMinimumTrackImage:(UIImage *)minimumTrackImage
+{
+    SAFE_ARC_RELEASE(minimumTrackImage);
+    _minimumTrackImage = SAFE_ARC_RETAIN(minimumTrackImage);
+}
+
+- (UIImage *)minimumTrackImage
+{
+    return _minimumTrackImage;
+}
+
+- (void)setMaximumTrackImage:(UIImage *)maximumTrackImage
+{
+    SAFE_ARC_RELEASE(maximumTrackImage);
+    _maximumTrackImage = maximumTrackImage;
+}
+
+- (UIImage *)maximumTrackImage
+{
+    return _maximumTrackImage;
 }
 
 - (double)value
@@ -149,9 +215,7 @@
     SAFE_ARC_RELEASE(value);
     _value = value;
     NSAssert(_value >= _minimumValue, @"slider current value can not less than minimumValue");
-    float per = (_value - _minimumValue) / (_maximumValue - _minimumValue);
-    float thumbX = per * self.frame.size.width - self.frame.size.height/2;
-    _thumbImageView.frame = CGRectMake(thumbX, _thumbImageView.frame.origin.y, _thumbImageView.frame.size.width, _thumbImageView.frame.size.height);
+    
 }
 
 - (void)setMaximumValue:(double)maximumValue
@@ -180,8 +244,25 @@
 - (void)calculateCurrentValue
 {
     NSAssert(_maximumValue >= _minimumValue, @"slider maximumValue can not less than minimumValue");
-    double per = MAX(0, _thumbImageView.frame.origin.x/(self.frame.size.width - 1.0 *self.frame.size.height));
-    double curValue = _minimumValue + per * (_maximumValue - _minimumValue);
+    double per;
+    double curValue;
+    switch (_orientation) {
+        case SSSliderOrientationHorizontalLeft:{
+            per =  MAX(0, _thumbImageView.frame.origin.x/(self.frame.size.width - _thumbImageView.image.size.width*IMG_SIZE));
+            curValue = _minimumValue + per * (_maximumValue - _minimumValue);
+        }
+            break;
+        case SSSliderOrientationHorizontalRight:{
+            per = MIN(1, 1-_thumbImageView.frame.origin.x/(self.frame.size.width - 1.0*self.frame.size.height));
+            curValue = _minimumValue + per * (_maximumValue - _minimumValue);
+        }
+            break;
+        default:{
+            per =  MAX(0, _thumbImageView.frame.origin.x/(self.frame.size.width - 1.0 *self.frame.size.height));
+            curValue = _minimumValue + per * (_maximumValue - _minimumValue);
+        }
+            break;
+    }
     if (curValue != _value) {
         _value = curValue;
         [self sendActionsForControlEvents:UIControlEventValueChanged];
@@ -205,19 +286,21 @@
                          0,
                          MIN(
                              _thumbImageView.frame.origin.x+dltX,
-                             self.frame.size.width-self.frame.size.height)
+                             self.frame.size.width-_thumbImageView.image.size.width*IMG_SIZE)
                          );
         _thumbImageView.frame = CGRectMake(newX, _thumbImageView.frame.origin.y, _thumbImageView.frame.size.width, _thumbImageView.frame.size.height);
+        _minimumTrackImageView.frame = CGRectMake(_minimumTrackImageView.frame.origin.x, _minimumTrackImageView.frame.origin.y, _thumbImageView.center.x - _minimumTrackImageView.frame.origin.x, _minimumTrackImageView.frame.size.height);
+        _maximumTrackImageView.frame = CGRectMake(_thumbImageView.center.x, _maximumTrackImageView.frame.origin.y, _trackImageView.bounds.size.width - (_thumbImageView.center.x - _minimumTrackImageView.frame.origin.x),_maximumTrackImageView.frame.size.height);
     }else if (_orientation == SSSliderOrientationHorizontalRight) {
-//        float newX = MAX(
-//						 self.frame.size.height+minimumRangeLength*(self.frame.size.width-self.frame.size.height*2.0),
-//						 MIN(
-//							 maxSlider.frame.origin.x+dltX,
-//							 self.frame.size.width-self.frame.size.height)
-//						 );
+        float newX = MAX(
+						 0,
+						 MIN(
+							 _thumbImageView.frame.origin.x+dltX,
+							 self.frame.size.width-self.frame.size.height)
+						 );
+        _thumbImageView.frame = CGRectMake(newX, _thumbImageView.frame.origin.y, _thumbImageView.frame.size.width, _thumbImageView.frame.size.height);
     }
     
-    NSLog(@"当前value:%f", _value);
     [self calculateCurrentValue];
 }
 
