@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>DFD49CD4-1B7D-4070-8949-AB2DBEA99E00</string>
+	<key>IDESourceControlProjectName</key>
+	<string>SSSlider</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>4A74C095-CC31-4B4C-85FA-F005D37614F9</key>
+		<string>https://github.com/Vienta/SSSlider.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>SSSlider.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>4A74C095-CC31-4B4C-85FA-F005D37614F9</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Vienta/SSSlider.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>4A74C095-CC31-4B4C-85FA-F005D37614F9</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>4A74C095-CC31-4B4C-85FA-F005D37614F9</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SSSlider</string>
+		</dict>
+	</array>
+</dict>
+</plist>

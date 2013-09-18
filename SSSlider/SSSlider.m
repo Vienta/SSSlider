@@ -17,48 +17,8 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-    self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, SLIDER_HEIGHT)];
-    if (self) {
-        // Initialization code
-        /*
-        self.clipsToBounds = NO;
-        
-        //default value
-        _minimumValue = 0.0;
-        _maximumValue = 1.0;
-        self.backgroundColor = [UIColor clearColor];
-         */
-        /*
-        //background
-        _backgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, SLIDER_HEIGHT)];
-        _backgroundImageView.contentMode = UIViewContentModeScaleToFill;
-        [self addSubview:_backgroundImageView];
-        */
-        /*
-        //trackimage
-        _trackImageView = [[UIImageView alloc] initWithFrame:CGRectMake(INNER_SIZE, 0, frame.size.width - 2 *INNER_SIZE, SLIDER_HEIGHT)];
-        _trackImageView.contentMode = UIViewContentModeScaleToFill;
-        [self addSubview:_trackImageView];
-        if (!_trackImage) {
-            _trackImage = [UIImage imageNamed:@"fullrange.png"];
-        }
-        _trackImageView.image = _trackImage;
-        _trackImageView.frame = CGRectMake(INNER_SIZE, MAX((self.frame.size.height-_trackImage.size.height)/2.0,0), self.frame.size.width-2*INNER_SIZE, MIN(self.frame.size.height,_trackImage.size.height));
-         */
-        /*
-        _thumbImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, (SLIDER_HEIGHT - self.frame.size.height)/2.0, self.frame.size.height, self.frame.size.height)];
-        _thumbImageView.contentMode = UIViewContentModeScaleToFill;
-        [self addSubview:_thumbImageView];
-        if (!_thumbImage) {
-            _thumbImage = [UIImage imageNamed:@"rangethumb"];
-        }
-        _thumbImageView.image = _thumbImage;
-         */
-        
-        /*
-        _orientation = SSSliderOrientationHorizontalLeft;
-        _value = _minimumValue;
-        */
+//    self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, SLIDER_HEIGHT)];
+    if (self = [super initWithFrame:frame]) {
         [self initSlider];
     }
     return self;

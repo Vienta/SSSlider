@@ -19,10 +19,10 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    SSSlider *slider = [[SSSlider alloc] initWithFrame:CGRectMake(200, 400, 300, 30)];
+    SSSlider *slider = [[SSSlider alloc] initWithFrame:CGRectMake(50, 200, 200, 30)];
     slider.minimumValue = 20000;
     slider.maximumValue = 399999;
-    slider.orientation = SSSliderOrientationHorizontalRight;
+//    slider.orientation = SSSliderOrientationHorizontalRight;
     
     slider.backgroundColor = [UIColor greenColor];
     [self.view addSubview:slider];
