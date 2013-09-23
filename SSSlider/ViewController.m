@@ -21,8 +21,10 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    SSSlider *slider = [[SSSlider alloc] initWithFrame:CGRectMake(10, 200, 300, 30)];
-    slider.value = .5;
+//    SSSlider *slider = [[SSSlider alloc] initWithFrame:CGRectMake(10, 200, 30, 300)];
+    SSSlider *slider = [[SSSlider alloc] initVerticalWithFrame:CGRectMake(100, 200, 30, 300)];
+//    slider.backgroundColor = [UIColor greenColor];
+    slider.value = .6;
     slider.minimumTrackTintColor = [UIColor greenColor];
     slider.maximumTrackTintColor = [UIColor redColor];
     slider.orientation = SSSliderOrientationVerticalBottom;

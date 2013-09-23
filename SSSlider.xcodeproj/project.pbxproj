@@ -10,6 +10,8 @@
 		B30E29D417E7F7FF0002DF4E /* fullrange@ipadhd.png in Resources */ = {isa = PBXBuildFile; fileRef = B30E29D117E7F7FF0002DF4E /* fullrange@ipadhd.png */; };
 		B30E29D617E806750002DF4E /* slider_allin_thumb@ipadhd.png in Resources */ = {isa = PBXBuildFile; fileRef = B30E29D517E806750002DF4E /* slider_allin_thumb@ipadhd.png */; };
 		B30E29D817E806AB0002DF4E /* track_allin_normal@hd.png in Resources */ = {isa = PBXBuildFile; fileRef = B30E29D717E806AB0002DF4E /* track_allin_normal@hd.png */; };
+		B3AB0C8517F02DBC00F37376 /* fullrangev@hd.png in Resources */ = {isa = PBXBuildFile; fileRef = B3AB0C8317F02DBC00F37376 /* fullrangev@hd.png */; };
+		B3AB0C8617F02DBC00F37376 /* fullrangev@ipadhd.png in Resources */ = {isa = PBXBuildFile; fileRef = B3AB0C8417F02DBC00F37376 /* fullrangev@ipadhd.png */; };
 		B3AD88BD17E6AEB9008ECE9B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD88BC17E6AEB9008ECE9B /* Foundation.framework */; };
 		B3AD88BF17E6AEB9008ECE9B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD88BE17E6AEB9008ECE9B /* CoreGraphics.framework */; };
 		B3AD88C117E6AEB9008ECE9B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD88C017E6AEB9008ECE9B /* UIKit.framework */; };
@@ -47,6 +49,8 @@
 		B30E29D117E7F7FF0002DF4E /* fullrange@ipadhd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fullrange@ipadhd.png"; sourceTree = "<group>"; };
 		B30E29D517E806750002DF4E /* slider_allin_thumb@ipadhd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "slider_allin_thumb@ipadhd.png"; sourceTree = "<group>"; };
 		B30E29D717E806AB0002DF4E /* track_allin_normal@hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "track_allin_normal@hd.png"; sourceTree = "<group>"; };
+		B3AB0C8317F02DBC00F37376 /* fullrangev@hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fullrangev@hd.png"; sourceTree = "<group>"; };
+		B3AB0C8417F02DBC00F37376 /* fullrangev@ipadhd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fullrangev@ipadhd.png"; sourceTree = "<group>"; };
 		B3AD88B917E6AEB9008ECE9B /* SSSlider.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SSSlider.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD88BC17E6AEB9008ECE9B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3AD88BE17E6AEB9008ECE9B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -146,6 +150,8 @@
 				B3C5E98717E99B120040DC4F /* fullrange@hd.png */,
 				B3B1173017E7F36000FF3829 /* rangethumb@ipadhd.png */,
 				B3C5E98917E99B3F0040DC4F /* rangethumb@hd.png */,
+				B3AB0C8317F02DBC00F37376 /* fullrangev@hd.png */,
+				B3AB0C8417F02DBC00F37376 /* fullrangev@ipadhd.png */,
 				B3AD88CB17E6AEB9008ECE9B /* AppDelegate.h */,
 				B3AD88CC17E6AEB9008ECE9B /* AppDelegate.m */,
 				B3AD88FD17E6B44D008ECE9B /* ARCMacro.h */,
@@ -270,12 +276,14 @@
 				B3AD88D317E6AEB9008ECE9B /* Main_iPad.storyboard in Resources */,
 				B3C5E98817E99B120040DC4F /* fullrange@hd.png in Resources */,
 				B3B1173617E7F36000FF3829 /* rangethumb@ipadhd.png in Resources */,
+				B3AB0C8617F02DBC00F37376 /* fullrangev@ipadhd.png in Resources */,
 				B3AD88D817E6AEB9008ECE9B /* Images.xcassets in Resources */,
 				B30E29D617E806750002DF4E /* slider_allin_thumb@ipadhd.png in Resources */,
 				B3C5E98617E999280040DC4F /* slider_allin_thumb@hd.png in Resources */,
 				B3AD88D017E6AEB9008ECE9B /* Main_iPhone.storyboard in Resources */,
 				B30E29D817E806AB0002DF4E /* track_allin_normal@hd.png in Resources */,
 				B30E29D417E7F7FF0002DF4E /* fullrange@ipadhd.png in Resources */,
+				B3AB0C8517F02DBC00F37376 /* fullrangev@hd.png in Resources */,
 				B3AD88C717E6AEB9008ECE9B /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

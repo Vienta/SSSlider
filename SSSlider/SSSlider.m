@@ -1,4 +1,4 @@
-//
+    //
 //  SSSlider.m
 //  SSSlider
 //
@@ -27,6 +27,25 @@
     return self;
 }
 
+- (id)initVerticalWithFrame:(CGRect)frame
+{
+    UIImage *trackImg = [UIImage imageFilename:@"rangethumb"];
+    
+    self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, trackImg.size.width*IMG_SIZE+2*INNER_SIZE, frame.size.height)];
+    if (self) {
+        [self initVerticalSlider];
+    }
+    return self;
+}
+- (void)initVerticalSlider
+{
+    self.clipsToBounds = NO;
+    _minimumValue = 0.0;
+    _maximumValue = 1.0;
+    _orientation = SSSliderOrientationVerticalBottom;
+    _value = _minimumValue;
+    self.backgroundColor = [UIColor clearColor];
+}
 - (void)initSlider
 {
     self.clipsToBounds = NO;
@@ -51,7 +70,7 @@
         }
             break;
         case SSSliderOrientationVerticalBottom: {
-            [self sliderOrientationHorizontalLeft:rect];
+            [self sliderOrientationVerticalBottom:rect];
         }
             break;
         case SSSliderOrientationVerticalTop:{
@@ -126,6 +145,70 @@
             _minimumTrackImageView.center = CGPointMake(_minimumTrackImageView.center.x, _trackImageView.center.y);
         }
     }
+}
+
+- (void)sliderOrientationVerticalBottom:(CGRect)rect
+{
+    if (!_thumbImage) {
+        _thumbImage = [UIImage imageFilename:@"rangethumb"];
+    }
+    CGSize thumbSize = _thumbImage.size;
+    CGFloat thumbX = thumbSize.width*IMG_SIZE;
+    CGFloat thumbY = thumbSize.height*IMG_SIZE;
+    
+    //background
+    _backgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake((rect.size.width - (thumbX+2*INNER_SIZE))/2, 0, thumbX + 2*INNER_SIZE, rect.size.height)];
+    _backgroundImageView.contentMode = UIViewContentModeScaleToFill;
+    [self addSubview:_backgroundImageView];
+    
+    //track
+    _trackImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, thumbY/2.0, thumbX, rect.size.height-thumbY)];
+    _trackImageView.contentMode = UIViewContentModeScaleToFill;
+    if (!_trackImage) {
+        _trackImage = [UIImage imageFilename:@"fullrangev"];
+    }
+    _trackImageView.image = _trackImage;
+    _trackImageView.frame = CGRectMake((rect.size.width - _trackImage.size.width*IMG_SIZE)/2.0, thumbY/2.0, MIN(rect.size.width, _trackImage.size.width*IMG_SIZE), rect.size.height - thumbY);
+    [self addSubview:_trackImageView];
+    
+    //thumb
+    float per = (_value - _minimumValue) / (_maximumValue - _minimumValue);
+    float thumbOriginY = (rect.size.height - _thumbImage.size.height*IMG_SIZE)*per;
+    
+    _thumbImageView = [[UIImageView alloc] initWithFrame:CGRectMake((rect.size.width - thumbX)/2.0, rect.size.height-thumbY-thumbOriginY, thumbX, thumbY)];
+    _thumbImageView.contentMode = UIViewContentModeScaleToFill;
+    [self addSubview:_thumbImageView];
+    _thumbImageView.image = _thumbImage;
+    
+    //right track
+    _maximumTrackImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, thumbY/2, thumbX, _thumbImageView.center.y)];
+    _maximumTrackImageView.contentMode = UIViewContentModeScaleToFill;
+    if (_maximumTrackImage) {
+        _maximumTrackImageView.image = _maximumTrackImage;
+        _maximumTrackImageView.frame = CGRectMake((rect.size.width - _maximumTrackImage.size.width*IMG_SIZE)/2.0, _thumbImageView.center.y, _maximumTrackImage.size.width*IMG_SIZE, rect.size.height - thumbY - _thumbImageView.center.y);
+    } else {
+        if (_maximumTrackTintColor) {
+            _maximumTrackImageView.backgroundColor = _maximumTrackTintColor;
+            _maximumTrackImageView.bounds = CGRectMake(0, 0, _trackImageView.bounds.size.width, _maximumTrackImageView.bounds.size.height);
+            _maximumTrackImageView.center = CGPointMake(_trackImageView.center.x, _maximumTrackImageView.center.y);
+        }
+    }
+    [self insertSubview:_maximumTrackImageView belowSubview:_thumbImageView];
+    
+    //left track
+    _minimumTrackImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, _thumbImageView.center.y, thumbX, rect.size.height - thumbY/2.0 - _thumbImageView.center.y)];
+    _minimumTrackImageView.contentMode = UIViewContentModeScaleToFill;
+    if (_minimumTrackImage) {
+        _minimumTrackImageView.image = _minimumTrackImage;
+        _minimumTrackImageView.frame = CGRectMake((rect.size.width - _minimumTrackImage.size.width*IMG_SIZE)/2.0, rect.size.height - thumbY/2.0, _minimumTrackImage.size.width*IMG_SIZE, rect.size.height - _thumbImageView.center.y - thumbY/2.0);
+    } else {
+        if (_minimumTrackTintColor) {
+            _minimumTrackImageView.backgroundColor = _minimumTrackTintColor;
+            _minimumTrackImageView.bounds = CGRectMake(0, 0, _trackImageView.bounds.size.width, _minimumTrackImageView.bounds.size.height);
+            _minimumTrackImageView.center = CGPointMake(_trackImageView.center.x, _minimumTrackImageView.center.y);
+        }
+    }
+    [self insertSubview:_minimumTrackImageView belowSubview:_thumbImageView];
 }
 
 - (void)sliderOrientationHorizontalRight:(CGRect)rect
@@ -259,8 +342,8 @@
         }
             break;
         case SSSliderOrientationVerticalBottom:{
-            per =  MAX(0, _thumbImageView.frame.origin.y/(self.frame.size.height - _thumbImageView.image.size.height*IMG_SIZE));
-            curValue = _minimumValue + per * (_maximumValue - _minimumValue);
+            per =  MAX(0, (_thumbImageView.frame.origin.y)/(self.frame.size.height - _thumbImageView.image.size.height*IMG_SIZE));
+            curValue = _minimumValue + (1-per) * (_maximumValue - _minimumValue);
         }
             break;
         default:{
@@ -287,7 +370,8 @@
     UITouch *touch = [touches anyObject];
     
     float dltX = [touch locationInView:self].x - [touch previousLocationInView:self].x;
-
+    float dltY = [touch locationInView:self].y - [touch previousLocationInView:self].y;
+    NSLog(@"dltY = %f", dltY);
     if (_orientation == SSSliderOrientationHorizontalLeft) {
         float newX = MAX(
                          0,
@@ -307,12 +391,15 @@
 						 );
         _thumbImageView.frame = CGRectMake(newX, _thumbImageView.frame.origin.y, _thumbImageView.frame.size.width, _thumbImageView.frame.size.height);
     } else if (_orientation == SSSliderOrientationVerticalBottom) {
-        /*
-        float newY = MAX(0, MIN(_thumbImageView.frame.origin.y+dltX, self.frame.size.height - _thumbImageView.image.size.height*IMG_SIZE));
+        float newY = MAX(
+                         0,
+                         MIN(
+                             _thumbImageView.frame.origin.y+dltY,
+                             self.frame.size.height - _thumbImageView.image.size.height*IMG_SIZE)
+                         );
         _thumbImageView.frame = CGRectMake(_thumbImageView.frame.origin.x, newY, _thumbImageView.frame.size.width, _thumbImageView.frame.size.height);
-        _minimumTrackImageView.frame = CGRectMake(_minimumTrackImageView.frame.origin.x, _minimumTrackImageView.frame.origin.y, _minimumTrackImageView.frame.size.width, _thumbImageView.center.y - _minimumTrackImageView.frame.origin.y);
-        _maximumTrackImageView.frame = CGRectMake(_maximumTrackImageView.frame.origin.x, _thumbImageView.center.y, _maximumTrackImageView.frame.size.width, _trackImageView.bounds.size.width - (_thumbImageView.center.y - _minimumTrackImageView.frame.origin.y));
-         */
+        _minimumTrackImageView.frame = CGRectMake(_minimumTrackImageView.frame.origin.x, _thumbImageView.center.y, _minimumTrackImageView.frame.size.width, self.bounds.size.height-_thumbImageView.image.size.height*IMG_SIZE/2 - _thumbImageView.center.y);
+        _maximumTrackImageView.frame = CGRectMake(_maximumTrackImageView.frame.origin.x, _maximumTrackImageView.frame.origin.y, _maximumTrackImageView.frame.size.width, _thumbImageView.center.y - _thumbImageView.image.size.height*IMG_SIZE/2);
     }
     
     [self calculateCurrentValue];
