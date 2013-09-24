@@ -30,7 +30,7 @@
 - (id)initVerticalWithFrame:(CGRect)frame
 {
     UIImage *trackImg = [UIImage imageFilename:@"rangethumb"];
-    
+    NSLog(@"垂直开始:%@", NSStringFromCGRect(frame));
     self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, trackImg.size.width*IMG_SIZE+2*INNER_SIZE, frame.size.height)];
     if (self) {
         [self initVerticalSlider];
@@ -58,6 +58,7 @@
 
 - (void)drawRect:(CGRect)rect
 {
+    NSLog(@"垂直dsafrect = %@",NSStringFromCGRect(rect));
     [super drawRect:rect];
     switch (_orientation) {
         case SSSliderOrientationHorizontalLeft:{
@@ -149,6 +150,8 @@
 
 - (void)sliderOrientationVerticalBottom:(CGRect)rect
 {
+    NSLog(@"垂直rect = %@",NSStringFromCGRect(rect));
+    
     if (!_thumbImage) {
         _thumbImage = [UIImage imageFilename:@"rangethumb"];
     }
@@ -255,7 +258,12 @@
 {
     SAFE_ARC_RELEASE(thumbImage);
     _thumbImage = SAFE_ARC_RETAIN(thumbImage);
-    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, _thumbImage.size.height * IMG_SIZE);
+    if (_orientation == SSSliderOrientationHorizontalLeft) {
+        self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, _thumbImage.size.height * IMG_SIZE);
+    } else if (_orientation == SSSliderOrientationVerticalBottom) {
+        self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, _thumbImage.size.height*IMG_SIZE, self.frame.size.height);
+    }
+    
     [self setNeedsDisplay];
 }
 
@@ -299,7 +307,22 @@
     SAFE_ARC_RELEASE(value);
     _value = value;
     NSAssert(_value >= _minimumValue, @"slider current value can not less than minimumValue");
-    
+    CGSize thumbSize = _thumbImage.size;
+    CGFloat thumbX = thumbSize.width *IMG_SIZE;
+    CGFloat thumbY = thumbSize.height*IMG_SIZE;
+    float per = (_value - _minimumValue) / (_maximumValue - _minimumValue);
+    if (_orientation == SSSliderOrientationHorizontalLeft) {
+        float thumbOriginX = (self.frame.size.width - _thumbImage.size.width*IMG_SIZE)*per;
+        _thumbImageView.frame = CGRectMake(thumbOriginX, (self.bounds.size.height - thumbY)/2.0, thumbX, thumbY);
+        _minimumTrackImageView.frame = CGRectMake(_minimumTrackImageView.frame.origin.x, _minimumTrackImageView.frame.origin.y, _thumbImageView.center.x - _minimumTrackImageView.frame.origin.x, _minimumTrackImageView.frame.size.height);
+        _maximumTrackImageView.frame = CGRectMake(_thumbImageView.center.x, _maximumTrackImageView.frame.origin.y, _trackImageView.bounds.size.width - (_thumbImageView.center.x - _minimumTrackImageView.frame.origin.x),_maximumTrackImageView.frame.size.height);
+    } else if (_orientation == SSSliderOrientationVerticalBottom) {
+        float thumbOriginY = (self.bounds.size.height - _thumbImage.size.height*IMG_SIZE)*per;
+        _thumbImageView.frame = CGRectMake((self.bounds.size.width - thumbX)/2.0, self.bounds.size.height - thumbY - thumbOriginY, thumbX, thumbY);
+        _minimumTrackImageView.frame = CGRectMake(_minimumTrackImageView.frame.origin.x, _thumbImageView.center.y, _minimumTrackImageView.frame.size.width, self.bounds.size.height-_thumbImageView.image.size.height*IMG_SIZE/2 - _thumbImageView.center.y);
+        _maximumTrackImageView.frame = CGRectMake(_maximumTrackImageView.frame.origin.x, _maximumTrackImageView.frame.origin.y, _maximumTrackImageView.frame.size.width, _thumbImageView.center.y - _thumbImageView.image.size.height*IMG_SIZE/2);
+    }
+
 }
 
 - (void)setMaximumValue:(double)maximumValue

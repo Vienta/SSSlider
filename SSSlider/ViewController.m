@@ -29,7 +29,7 @@
     slider.maximumTrackTintColor = [UIColor redColor];
     slider.orientation = SSSliderOrientationVerticalBottom;
 //    slider.orientation = SSSliderOrientationHorizontalLeft;
-//    slider.thumbImage = [UIImage imageFilename:@"slider_allin_thumb"];
+    slider.thumbImage = [UIImage imageFilename:@"slider_allin_thumb"];
 //    slider.backgroundColor = [UIColor greenColor];
     [slider addTarget:self action:@selector(test:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:slider];
