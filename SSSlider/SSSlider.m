@@ -14,13 +14,16 @@
 #define INNER_SIZE 5
 
 @implementation SSSlider
+{
+    NSMutableDictionary *thumbMDict;
+    BOOL isMove;
+}
 
 - (id)initWithFrame:(CGRect)frame
 {
-    UIImage *trackImg = [UIImage imageFilename:@"rangethumb"];
-    
+    [self initThumb];
+    UIImage *trackImg = [thumbMDict objectForKey:@(UIControlStateNormal)];
     self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, trackImg.size.height*IMG_SIZE+2*INNER_SIZE)];
-    
     if (self) {
         [self initSlider];
     }
@@ -29,14 +32,22 @@
 
 - (id)initVerticalWithFrame:(CGRect)frame
 {
-    UIImage *trackImg = [UIImage imageFilename:@"rangethumb"];
-    NSLog(@"垂直开始:%@", NSStringFromCGRect(frame));
+    [self initThumb];
+    UIImage *trackImg = [thumbMDict objectForKey:@(UIControlStateNormal)];
     self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, trackImg.size.width*IMG_SIZE+2*INNER_SIZE, frame.size.height)];
     if (self) {
         [self initVerticalSlider];
     }
     return self;
 }
+
+- (void)initThumb
+{
+    thumbMDict = [NSMutableDictionary dictionaryWithCapacity:0];
+    UIImage *thum = [UIImage imageFilename:@"rangethumb"];
+    [thumbMDict setObject:thum forKey:@(UIControlStateNormal)];
+}
+
 - (void)initVerticalSlider
 {
     self.clipsToBounds = NO;
@@ -58,7 +69,6 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    NSLog(@"垂直dsafrect = %@",NSStringFromCGRect(rect));
     [super drawRect:rect];
     switch (_orientation) {
         case SSSliderOrientationHorizontalLeft:{
@@ -87,10 +97,16 @@
 
 - (void)sliderOrientationHorizontalLeft:(CGRect)rect
 {
+    /*
     if (!_thumbImage) {
         _thumbImage = [UIImage imageFilename:@"rangethumb"];
     }
-    CGSize thumbSize = _thumbImage.size;
+     */
+    if (![thumbMDict objectForKey:@(UIControlStateNormal)]) {
+        [thumbMDict setObject:[UIImage imageFilename:@"rangethumb"] forKey:@(UIControlStateNormal)];
+    }
+    UIImage *thumbimg = [thumbMDict objectForKey:@(UIControlStateNormal)];
+    CGSize thumbSize = thumbimg.size;
     CGFloat thumbX = thumbSize.width *IMG_SIZE;
     CGFloat thumbY = thumbSize.height*IMG_SIZE;
 
@@ -111,11 +127,11 @@
     
     //thumb
     float per = (_value - _minimumValue) / (_maximumValue - _minimumValue);
-    float thumbOriginX = (self.frame.size.width - _thumbImage.size.width*IMG_SIZE)*per;
+    float thumbOriginX = (self.frame.size.width - thumbimg.size.width*IMG_SIZE)*per;
     _thumbImageView = [[UIImageView alloc] initWithFrame:CGRectMake(thumbOriginX, (rect.size.height - thumbY)/2.0, thumbX, thumbY)];
     _thumbImageView.contentMode = UIViewContentModeScaleToFill;
     [self addSubview:_thumbImageView];
-    _thumbImageView.image = _thumbImage;
+    _thumbImageView.image = thumbimg;
     
     //right track
     _maximumTrackImageView = [[UIImageView alloc] initWithFrame:CGRectMake(_thumbImageView.center.x, 0, _trackImageView.bounds.size.width - (_thumbImageView.center.x-thumbX/2.0), thumbY)];
@@ -150,12 +166,16 @@
 
 - (void)sliderOrientationVerticalBottom:(CGRect)rect
 {
-    NSLog(@"垂直rect = %@",NSStringFromCGRect(rect));
-    
+    /*
     if (!_thumbImage) {
         _thumbImage = [UIImage imageFilename:@"rangethumb"];
     }
-    CGSize thumbSize = _thumbImage.size;
+     */
+    if (![thumbMDict objectForKey:@(UIControlStateNormal)]) {
+        [thumbMDict setObject:[UIImage imageFilename:@"rangethumb"] forKey:@(UIControlStateNormal)];
+    }
+    UIImage *thumbimg = [thumbMDict objectForKey:@(UIControlStateNormal)];
+    CGSize thumbSize = thumbimg.size;
     CGFloat thumbX = thumbSize.width*IMG_SIZE;
     CGFloat thumbY = thumbSize.height*IMG_SIZE;
     
@@ -176,12 +196,12 @@
     
     //thumb
     float per = (_value - _minimumValue) / (_maximumValue - _minimumValue);
-    float thumbOriginY = (rect.size.height - _thumbImage.size.height*IMG_SIZE)*per;
+    float thumbOriginY = (rect.size.height - thumbimg.size.height*IMG_SIZE)*per;
     
     _thumbImageView = [[UIImageView alloc] initWithFrame:CGRectMake((rect.size.width - thumbX)/2.0, rect.size.height-thumbY-thumbOriginY, thumbX, thumbY)];
     _thumbImageView.contentMode = UIViewContentModeScaleToFill;
     [self addSubview:_thumbImageView];
-    _thumbImageView.image = _thumbImage;
+    _thumbImageView.image = thumbimg;
     
     //right track
     _maximumTrackImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, thumbY/2, thumbX, _thumbImageView.center.y)];
@@ -263,8 +283,18 @@
     } else if (_orientation == SSSliderOrientationVerticalBottom) {
         self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, _thumbImage.size.height*IMG_SIZE, self.frame.size.height);
     }
-    
-    [self setNeedsDisplay];
+}
+
+- (void)setThumbImage:(UIImage *)image forState:(UIControlState)state
+{
+    SAFE_ARC_RELEASE(image);
+    NSAssert(state == UIControlStateHighlighted || state == UIControlStateNormal || state == UIControlStateSelected || state == UIControlStateDisabled, @"make sure your uicontrolstate is correct!");
+    [thumbMDict setObject:image forKey:@(state)];
+    if (_orientation == SSSliderOrientationHorizontalLeft) {
+        self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, image.size.height * IMG_SIZE);
+    } else if (_orientation == SSSliderOrientationVerticalBottom) {
+        self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, image.size.height*IMG_SIZE, self.frame.size.height);
+    }
 }
 
 - (UIImage *)thumbImage
@@ -272,6 +302,16 @@
     if (!_thumbImage) {
         _thumbImage = [UIImage imageNamed:@"rangethumb"];
     }
+    return _thumbImage;
+}
+
+- (UIImage *)thumbImageforState:(UIControlState)state
+{
+    if ([[thumbMDict allKeys] count] == 0 || !thumbMDict) {
+        _thumbImage = [UIImage imageNamed:@"rangethumb"];
+        [thumbMDict setObject:_thumbImage forKey:@(UIControlStateNormal)];
+    }
+    _thumbImage = [thumbMDict objectForKey:@(state)];
     return _thumbImage;
 }
 
@@ -311,6 +351,9 @@
     CGFloat thumbX = thumbSize.width *IMG_SIZE;
     CGFloat thumbY = thumbSize.height*IMG_SIZE;
     float per = (_value - _minimumValue) / (_maximumValue - _minimumValue);
+    if (per > 1.0) {
+        return;
+    }
     if (_orientation == SSSliderOrientationHorizontalLeft) {
         float thumbOriginX = (self.frame.size.width - _thumbImage.size.width*IMG_SIZE)*per;
         _thumbImageView.frame = CGRectMake(thumbOriginX, (self.bounds.size.height - thumbY)/2.0, thumbX, thumbY);
@@ -322,7 +365,6 @@
         _minimumTrackImageView.frame = CGRectMake(_minimumTrackImageView.frame.origin.x, _thumbImageView.center.y, _minimumTrackImageView.frame.size.width, self.bounds.size.height-_thumbImageView.image.size.height*IMG_SIZE/2 - _thumbImageView.center.y);
         _maximumTrackImageView.frame = CGRectMake(_maximumTrackImageView.frame.origin.x, _maximumTrackImageView.frame.origin.y, _maximumTrackImageView.frame.size.width, _thumbImageView.center.y - _thumbImageView.image.size.height*IMG_SIZE/2);
     }
-
 }
 
 - (void)setMaximumValue:(double)maximumValue
@@ -384,6 +426,15 @@
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [super touchesBegan:touches withEvent:event];
+    
+    UITouch *touch = [touches anyObject];
+    if (CGRectContainsPoint(_thumbImageView.frame, [touch locationInView:self])) {
+        if ([thumbMDict objectForKey:@(UIControlStateHighlighted)]) {
+            _thumbImageView.image = [thumbMDict objectForKey:@(UIControlStateHighlighted)];
+            _thumbImageView.bounds = CGRectMake(0, 0, _thumbImageView.image.size.width *IMG_SIZE, _thumbImageView.image.size.height *IMG_SIZE);
+        }
+        isMove = YES;
+    }
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
@@ -392,46 +443,52 @@
     
     UITouch *touch = [touches anyObject];
     
-    float dltX = [touch locationInView:self].x - [touch previousLocationInView:self].x;
-    float dltY = [touch locationInView:self].y - [touch previousLocationInView:self].y;
-    NSLog(@"dltY = %f", dltY);
-    if (_orientation == SSSliderOrientationHorizontalLeft) {
-        float newX = MAX(
-                         0,
-                         MIN(
-                             _thumbImageView.frame.origin.x+dltX,
-                             self.frame.size.width-_thumbImageView.image.size.width*IMG_SIZE)
-                         );
-        _thumbImageView.frame = CGRectMake(newX, _thumbImageView.frame.origin.y, _thumbImageView.frame.size.width, _thumbImageView.frame.size.height);
-        _minimumTrackImageView.frame = CGRectMake(_minimumTrackImageView.frame.origin.x, _minimumTrackImageView.frame.origin.y, _thumbImageView.center.x - _minimumTrackImageView.frame.origin.x, _minimumTrackImageView.frame.size.height);
-        _maximumTrackImageView.frame = CGRectMake(_thumbImageView.center.x, _maximumTrackImageView.frame.origin.y, _trackImageView.bounds.size.width - (_thumbImageView.center.x - _minimumTrackImageView.frame.origin.x),_maximumTrackImageView.frame.size.height);
-    } else if (_orientation == SSSliderOrientationHorizontalRight) {
-        float newX = MAX(
-						 0,
-						 MIN(
-							 _thumbImageView.frame.origin.x+dltX,
-							 self.frame.size.width-self.frame.size.height)
-						 );
-        _thumbImageView.frame = CGRectMake(newX, _thumbImageView.frame.origin.y, _thumbImageView.frame.size.width, _thumbImageView.frame.size.height);
-    } else if (_orientation == SSSliderOrientationVerticalBottom) {
-        float newY = MAX(
-                         0,
-                         MIN(
-                             _thumbImageView.frame.origin.y+dltY,
-                             self.frame.size.height - _thumbImageView.image.size.height*IMG_SIZE)
-                         );
-        _thumbImageView.frame = CGRectMake(_thumbImageView.frame.origin.x, newY, _thumbImageView.frame.size.width, _thumbImageView.frame.size.height);
-        _minimumTrackImageView.frame = CGRectMake(_minimumTrackImageView.frame.origin.x, _thumbImageView.center.y, _minimumTrackImageView.frame.size.width, self.bounds.size.height-_thumbImageView.image.size.height*IMG_SIZE/2 - _thumbImageView.center.y);
-        _maximumTrackImageView.frame = CGRectMake(_maximumTrackImageView.frame.origin.x, _maximumTrackImageView.frame.origin.y, _maximumTrackImageView.frame.size.width, _thumbImageView.center.y - _thumbImageView.image.size.height*IMG_SIZE/2);
+    if (isMove) {
+        float dltX = [touch locationInView:self].x - [touch previousLocationInView:self].x;
+        float dltY = [touch locationInView:self].y - [touch previousLocationInView:self].y;
+        
+        if (_orientation == SSSliderOrientationHorizontalLeft) {
+            float newX = MAX(
+                             0,
+                             MIN(
+                                 _thumbImageView.frame.origin.x+dltX,
+                                 self.frame.size.width-_thumbImageView.image.size.width*IMG_SIZE)
+                             );
+            _thumbImageView.frame = CGRectMake(newX, _thumbImageView.frame.origin.y, _thumbImageView.frame.size.width, _thumbImageView.frame.size.height);
+            _minimumTrackImageView.frame = CGRectMake(_minimumTrackImageView.frame.origin.x, _minimumTrackImageView.frame.origin.y, _thumbImageView.center.x - _minimumTrackImageView.frame.origin.x, _minimumTrackImageView.frame.size.height);
+            _maximumTrackImageView.frame = CGRectMake(_thumbImageView.center.x, _maximumTrackImageView.frame.origin.y, _trackImageView.bounds.size.width - (_thumbImageView.center.x - _minimumTrackImageView.frame.origin.x),_maximumTrackImageView.frame.size.height);
+        } else if (_orientation == SSSliderOrientationHorizontalRight) {
+            float newX = MAX(
+                             0,
+                             MIN(
+                                 _thumbImageView.frame.origin.x+dltX,
+                                 self.frame.size.width-self.frame.size.height)
+                             );
+            _thumbImageView.frame = CGRectMake(newX, _thumbImageView.frame.origin.y, _thumbImageView.frame.size.width, _thumbImageView.frame.size.height);
+        } else if (_orientation == SSSliderOrientationVerticalBottom) {
+            float newY = MAX(
+                             0,
+                             MIN(
+                                 _thumbImageView.frame.origin.y+dltY,
+                                 self.frame.size.height - _thumbImageView.image.size.height*IMG_SIZE)
+                             );
+            _thumbImageView.frame = CGRectMake(_thumbImageView.frame.origin.x, newY, _thumbImageView.frame.size.width, _thumbImageView.frame.size.height);
+            _minimumTrackImageView.frame = CGRectMake(_minimumTrackImageView.frame.origin.x, _thumbImageView.center.y, _minimumTrackImageView.frame.size.width, self.bounds.size.height-_thumbImageView.image.size.height*IMG_SIZE/2 - _thumbImageView.center.y);
+            _maximumTrackImageView.frame = CGRectMake(_maximumTrackImageView.frame.origin.x, _maximumTrackImageView.frame.origin.y, _maximumTrackImageView.frame.size.width, _thumbImageView.center.y - _thumbImageView.image.size.height*IMG_SIZE/2);
+        }
+        
+        [self calculateCurrentValue];
     }
     
-    [self calculateCurrentValue];
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [super touchesEnded:touches withEvent:event];
     [self sendActionsForControlEvents:UIControlEventTouchUpInside];
+    _thumbImageView.image = [thumbMDict objectForKey:@(UIControlStateNormal)];
+    _thumbImageView.bounds = CGRectMake(0, 0, _thumbImageView.image.size.width *IMG_SIZE, _thumbImageView.image.size.height *IMG_SIZE);
+    isMove = NO;
 }
 
 

@@ -21,15 +21,17 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-//    SSSlider *slider = [[SSSlider alloc] initWithFrame:CGRectMake(10, 200, 30, 300)];
-    SSSlider *slider = [[SSSlider alloc] initVerticalWithFrame:CGRectMake(100, 200, 30, 300)];
+    SSSlider *slider = [[SSSlider alloc] initWithFrame:CGRectMake(10, 200, 300, 30)];
+//    SSSlider *slider = [[SSSlider alloc] initVerticalWithFrame:CGRectMake(100, 200, 30, 300)];
 //    slider.backgroundColor = [UIColor greenColor];
     slider.value = .6;
     slider.minimumTrackTintColor = [UIColor greenColor];
     slider.maximumTrackTintColor = [UIColor redColor];
-    slider.orientation = SSSliderOrientationVerticalBottom;
-//    slider.orientation = SSSliderOrientationHorizontalLeft;
-    slider.thumbImage = [UIImage imageFilename:@"slider_allin_thumb"];
+//    slider.orientation = SSSliderOrientationVerticalBottom;
+    slider.orientation = SSSliderOrientationHorizontalLeft;
+//    slider.thumbImage = [UIImage imageFilename:@"slider_allin_thumb"];
+//    [slider setThumbImage:[UIImage imageFilename:@"slider_allin_thumb"] forState:UIControlStateNormal];
+    [slider setThumbImage:[UIImage imageFilename:@"slider_allin_thumb_highlight"] forState:UIControlStateHighlighted];
 //    slider.backgroundColor = [UIColor greenColor];
     [slider addTarget:self action:@selector(test:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:slider];

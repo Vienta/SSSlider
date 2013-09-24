@@ -44,5 +44,6 @@ typedef NS_ENUM(NSInteger, SSSliderOrientation) {
 @property (nonatomic, SAFE_ARC_PROP_RETAIN) UIImage *maximumTrackImage;
 
 - (void)setTrackImage:(UIImage *)image;
+- (void)setThumbImage:(UIImage *)image forState:(UIControlState)state;
 - (id)initVerticalWithFrame:(CGRect)frame;
 @end
