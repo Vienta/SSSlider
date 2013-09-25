@@ -30,6 +30,11 @@
     return self;
 }
 
+- (void)awakeFromNib
+{
+    [self initSlider];
+}
+
 - (id)initVerticalWithFrame:(CGRect)frame
 {
     [self initThumb];
@@ -204,7 +209,7 @@
     _thumbImageView.image = thumbimg;
     
     //right track
-    _maximumTrackImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, thumbY/2, thumbX, _thumbImageView.center.y)];
+    _maximumTrackImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, thumbY/2, thumbX, _thumbImageView.center.y-thumbY/2)];
     _maximumTrackImageView.contentMode = UIViewContentModeScaleToFill;
     if (_maximumTrackImage) {
         _maximumTrackImageView.image = _maximumTrackImage;
